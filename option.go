@@ -1,4 +1,4 @@
-package options
+package optionsgo
 
 type Option[T any] interface {
 	IsSome() bool

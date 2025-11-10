@@ -1,4 +1,4 @@
-package options
+package optionsgo
 
 type result[T any] struct {
 	value *T

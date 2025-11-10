@@ -1,8 +1,7 @@
-module github.com/yaadata/options
+module github.com/yaadata/optionsgo
 
 go 1.25.4
 
-require (
-	github.com/google/go-cmp v0.6.0 // indirect
-	github.com/shoenig/test v1.12.2 // indirect
-)
+require github.com/shoenig/test v1.12.2
+
+require github.com/google/go-cmp v0.6.0 // indirect

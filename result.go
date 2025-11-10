@@ -1,4 +1,4 @@
-package options
+package optionsgo
 
 type Result[T any] interface {
 	Ok() Option[T]
