@@ -10,6 +10,7 @@ import (
 )
 
 func TestOption_None(t *testing.T) {
+	t.Parallel()
 	t.Run("IsSome is false", func(t *testing.T) {
 		t.Parallel()
 		// [A]rrange
@@ -186,6 +187,7 @@ func TestOption_None(t *testing.T) {
 }
 
 func TestOption_Some(t *testing.T) {
+	t.Parallel()
 	t.Run("IsSome is true", func(t *testing.T) {
 		t.Parallel()
 		// [A]rrange

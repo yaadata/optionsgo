@@ -10,7 +10,9 @@ import (
 )
 
 func TestResult_Error(t *testing.T) {
+	t.Parallel()
 	t.Run("IsOk returns false", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Err[string](errors.New("err"))
 		// [A]ct
@@ -20,6 +22,7 @@ func TestResult_Error(t *testing.T) {
 	})
 
 	t.Run("IsOkAnd returns false", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Err[string](errors.New("err"))
 		pred := func(_ string) bool {
@@ -32,6 +35,7 @@ func TestResult_Error(t *testing.T) {
 	})
 
 	t.Run("IsError returns true", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Err[string](errors.New("err"))
 		// [A]ct
@@ -41,6 +45,8 @@ func TestResult_Error(t *testing.T) {
 	})
 
 	t.Run("IsErrorAnd returns true", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
 		// [A]rrange
 		msg := "error_message"
 		result := Err[string](errors.New(msg))
@@ -54,6 +60,7 @@ func TestResult_Error(t *testing.T) {
 	})
 
 	t.Run("IsErrorAnd returns false", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		msg := "error_message"
 		result := Err[string](errors.New(msg))
@@ -67,6 +74,7 @@ func TestResult_Error(t *testing.T) {
 	})
 
 	t.Run("Unwrap panics", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		msg := "error_message"
 		result := Err[string](errors.New(msg))
@@ -79,6 +87,7 @@ func TestResult_Error(t *testing.T) {
 	})
 
 	t.Run("UnwrapErr returns back the err", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		expected := errors.New("error_message")
 		result := Err[string](expected)
@@ -89,6 +98,7 @@ func TestResult_Error(t *testing.T) {
 	})
 
 	t.Run("UnwrapOr returns Other option", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Err[string](errors.New("error_message"))
 		expected := "EXPECTED"
@@ -99,6 +109,7 @@ func TestResult_Error(t *testing.T) {
 	})
 
 	t.Run("UnwrapOrElse returns Other option", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Err[string](errors.New("error_message"))
 		expected := "EXPECTED"
@@ -111,6 +122,7 @@ func TestResult_Error(t *testing.T) {
 	})
 
 	t.Run("UnwrapOrDefault returns Default", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Err[string](errors.New("error_message"))
 		// [A]ct
@@ -120,6 +132,7 @@ func TestResult_Error(t *testing.T) {
 	})
 
 	t.Run("Ok returns None", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Err[string](errors.New("error_message"))
 		// [A]ct
@@ -129,6 +142,7 @@ func TestResult_Error(t *testing.T) {
 	})
 
 	t.Run("Err returns Some", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		expected := errors.New("error_message")
 		result := Err[string](expected)
@@ -141,7 +155,9 @@ func TestResult_Error(t *testing.T) {
 }
 
 func TestResult_Value(t *testing.T) {
+	t.Parallel()
 	t.Run("IsOk returns true", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Ok("value")
 		// [A]ct
@@ -151,6 +167,7 @@ func TestResult_Value(t *testing.T) {
 	})
 
 	t.Run("IsOkAnd returns false", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Ok("value")
 		pred := func(_ string) bool {
@@ -163,6 +180,7 @@ func TestResult_Value(t *testing.T) {
 	})
 
 	t.Run("IsOkAnd returns true", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Ok("value")
 		pred := func(_ string) bool {
@@ -175,6 +193,7 @@ func TestResult_Value(t *testing.T) {
 	})
 
 	t.Run("IsError returns false", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Ok("value")
 		// [A]ct
@@ -184,6 +203,7 @@ func TestResult_Value(t *testing.T) {
 	})
 
 	t.Run("IsErrorAnd returns false", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Ok("value")
 		pred := func(_ error) bool {
@@ -196,6 +216,7 @@ func TestResult_Value(t *testing.T) {
 	})
 
 	t.Run("Unwrap does not panic", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		expected := "EXPECTED"
 		result := Ok(expected)
@@ -210,6 +231,7 @@ func TestResult_Value(t *testing.T) {
 	})
 
 	t.Run("UnwrapErr panics", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Ok("value")
 		// [A]ct
@@ -221,6 +243,7 @@ func TestResult_Value(t *testing.T) {
 	})
 
 	t.Run("UnwrapOr returns original value", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		expected := "EXPECTED"
 		result := Ok(expected)
@@ -231,6 +254,7 @@ func TestResult_Value(t *testing.T) {
 	})
 
 	t.Run("UnwrapOrElse returns original value", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		expected := "EXPECTED"
 		result := Ok(expected)
@@ -243,6 +267,7 @@ func TestResult_Value(t *testing.T) {
 	})
 
 	t.Run("UnwrapOrDefault returns original value", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		expected := "EXPECTED"
 		result := Ok(expected)
@@ -253,6 +278,7 @@ func TestResult_Value(t *testing.T) {
 	})
 
 	t.Run("Ok returns Some", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		expected := "EXPECTED"
 		result := Ok(expected)
@@ -264,6 +290,7 @@ func TestResult_Value(t *testing.T) {
 	})
 
 	t.Run("Err returns Some", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		result := Ok("EXPECTED")
 		// [A]ct
@@ -274,10 +301,12 @@ func TestResult_Value(t *testing.T) {
 }
 
 func TestResultFromReturn(t *testing.T) {
+	t.Parallel()
 	type Case struct {
 		val string
 	}
 	t.Run("nil return with error", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		expected := errors.New("case a")
 		fn := func() (*Case, error) {
@@ -291,6 +320,7 @@ func TestResultFromReturn(t *testing.T) {
 	})
 
 	t.Run("value return with no error", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		expected := &Case{
 			val: "EXPECTED",
@@ -307,6 +337,7 @@ func TestResultFromReturn(t *testing.T) {
 	})
 
 	t.Run("nil value and err", func(t *testing.T) {
+		t.Parallel()
 		// [A]rrange
 		fn := func() (*Case, error) {
 			return nil, nil
