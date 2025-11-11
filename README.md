@@ -11,6 +11,18 @@ core types:
 - **`Result[T]`** - Represents the outcome of an operation that can either
   succeed or fail
 
+## Dependencies
+
+The following tools are used in this project
+
+- [mise](https://github.com/jdx/mise)
+
+  Version management of Go for local development.
+
+- [just](https://github.com/casey/just)
+
+  Command runner. Alternative to Make.
+
 ## Installation
 
 ```bash
@@ -208,6 +220,9 @@ Run the test suite:
 ```bash
 just test
 ```
+
+Each merge to main is validated on the last 2 major version of Go across
+Windows, Mac and Linux.
 
 ## Contributing
 
