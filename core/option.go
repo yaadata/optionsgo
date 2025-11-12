@@ -18,6 +18,26 @@ package core
 //	    fmt.Println("no value")
 //	}
 type Option[T any] interface {
+	// And returns the other option if this option is None, otherwise returns this option.
+	// This is the opposite of Or, which returns this option if Some, otherwise returns other.
+	//
+	// Example:
+	//	opt := Some("SOME")
+	//	other := Some("OTHER")
+	//	result := opt.And(other)
+	//	result.Equal(opt) // returns true, returns the original Some
+	//
+	//	opt := None[string]()
+	//	other := Some("OTHER")
+	//	result := opt.And(other)
+	//	result.Equal(other) // returns true, returns the other option
+	//
+	//	opt := None[string]()
+	//	other := None[string]()
+	//	result := opt.And(other)
+	//	result.IsNone() // returns true, returns the other None
+	And(other Option[T]) Option[T]
+
 	// IsSome returns true if the option contains a value (is Some).
 	//
 	// Example:

@@ -175,8 +175,6 @@ Option and Result
 **For Option[T]:**
 
 - Transformation:
-  - [ ] `And`
-  - [ ] `AndThen`
   - [ ] `Filter`
   - [ ] `Xor`
   - [ ] `Flatten`

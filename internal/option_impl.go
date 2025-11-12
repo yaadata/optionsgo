@@ -25,6 +25,13 @@ func Some[T any](val T) core.Option[T] {
 	return &option[T]{value: &val}
 }
 
+func (o *option[T]) And(other core.Option[T]) core.Option[T] {
+	if o.IsNone() {
+		return other
+	}
+	return o
+}
+
 func (o *option[T]) IsSome() bool {
 	return o.value != nil
 }

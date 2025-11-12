@@ -185,10 +185,58 @@ func TestOption_None(t *testing.T) {
 		// [A]ssert
 		must.Eq(t, expected, result)
 	})
+
+	t.Run("And returns other option when called on None with None", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := None[string]()
+		other := None[string]()
+		// [A]ct
+		actual := opt.And(other)
+		// [A]ssert
+		must.True(t, actual.IsNone())
+		must.True(t, actual.Equal(other))
+	})
+
+	t.Run("And returns other option when called on None with Some", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := None[string]()
+		expected := Some("other")
+		// [A]ct
+		actual := opt.And(expected)
+		// [A]ssert
+		must.True(t, actual.IsSome())
+		must.True(t, actual.Equal(expected))
+	})
 }
 
 func TestOption_Some(t *testing.T) {
 	t.Parallel()
+	t.Run("And returns current Some when called on None", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some("current")
+		other := None[string]()
+		// [A]ct
+		actual := opt.And(other)
+		// [A]ssert
+		must.True(t, opt.IsSome())
+		must.True(t, actual.Equal(opt))
+	})
+
+	t.Run("And returns current Some when called on Some", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some("current")
+		other := Some("other")
+		// [A]ct
+		actual := opt.And(other)
+		// [A]ssert
+		must.True(t, opt.IsSome())
+		must.True(t, actual.Equal(opt))
+	})
+
 	t.Run("IsSome is true", func(t *testing.T) {
 		t.Parallel()
 		// [A]rrange

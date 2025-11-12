@@ -9,6 +9,33 @@ import (
 	"github.com/yaadata/optionsgo/internal"
 )
 
+func TestOptionAndThen(t *testing.T) {
+	t.Run("Some transforms to new type", func(t *testing.T) {
+		// [A]rrange
+		option := internal.Some(3)
+		fn := func(value int) string {
+			return strings.Repeat("A", value)
+		}
+		// [A]ct
+		actual := extension.OptionAndThen(option, fn)
+		// [A]ssert
+		must.True(t, actual.IsSome())
+		must.Eq(t, "AAA", actual.Unwrap())
+	})
+
+	t.Run("None returns None", func(t *testing.T) {
+		// [A]rrange
+		option := internal.None[int]()
+		fn := func(value int) string {
+			return strings.Repeat("A", value)
+		}
+		// [A]ct
+		actual := extension.OptionAndThen(option, fn)
+		// [A]ssert
+		must.True(t, actual.IsNone())
+	})
+}
+
 func TestOptionMap(t *testing.T) {
 	t.Run("Some maps to new type", func(t *testing.T) {
 		// [A]rrange
