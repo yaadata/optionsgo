@@ -7,6 +7,7 @@ import (
 
 	"github.com/shoenig/test/must"
 	. "github.com/yaadata/optionsgo"
+	"github.com/yaadata/optionsgo/core"
 )
 
 func TestOption_None(t *testing.T) {
@@ -178,7 +179,7 @@ func TestOption_None(t *testing.T) {
 		opt := None[string]()
 		expected := Some("OptionB")
 		// [A]ct
-		result := opt.OrElse(func() Option[string] {
+		result := opt.OrElse(func() core.Option[string] {
 			return expected
 		})
 		// [A]ssert
@@ -415,7 +416,7 @@ func TestOption_Some(t *testing.T) {
 		opt := Some(EXPECTED)
 		other := Some("OTHER")
 		// [A]ct
-		actual := opt.OrElse(func() Option[string] {
+		actual := opt.OrElse(func() core.Option[string] {
 			return other
 		})
 		// [A]ssert

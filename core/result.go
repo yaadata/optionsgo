@@ -1,4 +1,4 @@
-package optionsgo
+package core
 
 // Result represents the outcome of an operation that can either succeed with a value
 // or fail with an error. This is a Go implementation of Rust's std::result::Result type.
@@ -131,80 +131,4 @@ type Result[T any] interface {
 	//  result := Err[string](errors.New("error"))
 	//  value := result.UnwrapOrDefault() // ""
 	UnwrapOrDefault() T
-}
-
-// ResultFromReturn converts Go's standard (value, error) return pattern into a Result.
-// If err is not nil, returns Err. Otherwise, returns Ok with the value.
-//
-// This function is particularly useful for wrapping existing Go functions that follow
-// the conventional (T, error) return pattern.
-//
-// Example:
-//
-//	type User struct { name string }
-//
-//	func getUser() (*User, error) {
-//	    return &User{name: "Alice"}, nil
-//	}
-//
-//	result := ResultFromReturn(getUser())
-//	if result.IsOk() {
-//	    user := result.Unwrap() // &User{name: "Alice"}
-//	}
-//
-//	func failedOperation() (*User, error) {
-//	    return nil, errors.New("not found")
-//	}
-//
-//	result := ResultFromReturn(failedOperation())
-//	if result.IsError() {
-//	    err := result.UnwrapErr() // errors.New("not found")
-//	}
-//
-//	// Even with nil value and nil error, returns Ok
-//	func nilReturn() (*User, error) {
-//	    return nil, nil
-//	}
-//
-//	result := ResultFromReturn(nilReturn())
-//	result.IsOk() // true
-//	result.Unwrap() // nil
-func ResultFromReturn[T any](value T, err error) Result[T] {
-	if err != nil {
-		return Err[T](err)
-	}
-	return &result[T]{
-		value: &value,
-		err:   nil,
-	}
-}
-
-// Err creates a Result containing an error.
-//
-// Example:
-//
-//	result := Err[string](errors.New("something went wrong"))
-//	result.IsError() // true
-//	result.UnwrapErr() // errors.New("something went wrong")
-//	result.UnwrapOr("default") // "default"
-func Err[T any](err error) Result[T] {
-	return &result[T]{
-		value: nil,
-		err:   err,
-	}
-}
-
-// Ok creates a Result containing a successful value.
-//
-// Example:
-//
-//	result := Ok("success")
-//	result.IsOk() // true
-//	result.Unwrap() // "success"
-//	result.UnwrapOr("default") // "success"
-func Ok[T any](value T) Result[T] {
-	return &result[T]{
-		value: &value,
-		err:   nil,
-	}
 }

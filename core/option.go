@@ -1,4 +1,4 @@
-package optionsgo
+package core
 
 // Option is a Go implementation of Rust's Option<T> type.
 // It represents an optional value: every Option is either Some and contains a value,
@@ -210,49 +210,4 @@ type Option[T any] interface {
 	//	})
 	//	result.Equal(other) // returns true
 	OrElse(fn func() Option[T]) Option[T]
-}
-
-// None creates an Option that contains no value.
-//
-// Use None when you want to represent the absence of a value//
-// Example:
-//
-//	// Function that may not return a value
-//	func findUser(id int) Option[User] {
-//	    if id < 0 {
-//	        return None[User]()
-//	    }
-//	    // ... find user logic
-//	    return Some(user)
-//	}
-//
-//	result := findUser(-1)
-//	if result.IsNone() {
-//	    fmt.Println("User not found")
-//	}
-func None[T any]() Option[T] {
-	return &option[T]{value: nil}
-}
-
-// Some creates an Option that contains the provided value.
-//
-// Use Some when you have a valid value to wrap in an Option type.
-// Example:
-//
-//	// Function that returns a value when found
-//	func findUser(id int) Option[User] {
-//	    if id < 0 {
-//	        return None[User]()
-//	    }
-//	    // ... find user logic
-//	    return Some(user)
-//	}
-//
-//	result := findUser(123)
-//	if result.IsSome() {
-//	    user := result.Unwrap()
-//	    fmt.Printf("Found user: %v\n", user)
-//	}
-func Some[T any](val T) Option[T] {
-	return &option[T]{value: &val}
 }

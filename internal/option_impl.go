@@ -1,6 +1,10 @@
-package optionsgo
+package internal
 
-import "reflect"
+import (
+	"reflect"
+
+	"github.com/yaadata/optionsgo/core"
+)
 
 const (
 	_FAILED_UNWRAP = "failed to unwrap None value"
@@ -11,13 +15,21 @@ type option[T any] struct {
 }
 
 // interface guard
-var _ Option[string] = (*option[string])(nil)
+var _ core.Option[string] = (*option[string])(nil)
+
+func None[T any]() core.Option[T] {
+	return &option[T]{value: nil}
+}
+
+func Some[T any](val T) core.Option[T] {
+	return &option[T]{value: &val}
+}
 
 func (o *option[T]) IsSome() bool {
 	return o.value != nil
 }
 
-func (o *option[T]) IsSomeAnd(pred Predicate[T]) bool {
+func (o *option[T]) IsSomeAnd(pred core.Predicate[T]) bool {
 	if o.value != nil {
 		return pred(*o.value)
 	}
@@ -28,14 +40,14 @@ func (o *option[T]) IsNone() bool {
 	return o.value == nil
 }
 
-func (o *option[T]) IsNoneOr(pred Predicate[T]) bool {
+func (o *option[T]) IsNoneOr(pred core.Predicate[T]) bool {
 	if o.value != nil {
 		return pred(*o.value)
 	}
 	return true
 }
 
-func (o *option[T]) Equal(other Option[T]) bool {
+func (o *option[T]) Equal(other core.Option[T]) bool {
 	if o.IsNone() && other.IsNone() || (o == other) {
 		return true
 	}
@@ -74,35 +86,35 @@ func (o *option[T]) UnwrapOrDefault() T {
 	return *o.value
 }
 
-func (o *option[T]) Filter(pred Predicate[T]) Option[T] {
+func (o *option[T]) Filter(pred core.Predicate[T]) core.Option[T] {
 	if o.value != nil && pred(*o.value) {
 		return o
 	}
 	return None[T]()
 }
 
-func (o *option[T]) OkOr(err error) Result[T] {
+func (o *option[T]) OkOr(err error) core.Result[T] {
 	if o.IsSome() {
 		return Ok(*o.value)
 	}
 	return Err[T](err)
 }
 
-func (o *option[T]) OkOrElse(fn func() error) Result[T] {
+func (o *option[T]) OkOrElse(fn func() error) core.Result[T] {
 	if o.IsSome() {
 		return Ok(*o.value)
 	}
 	return Err[T](fn())
 }
 
-func (o *option[T]) Or(optb Option[T]) Option[T] {
+func (o *option[T]) Or(optb core.Option[T]) core.Option[T] {
 	if o.IsNone() {
 		return optb
 	}
 	return o
 }
 
-func (o *option[T]) OrElse(fn func() Option[T]) Option[T] {
+func (o *option[T]) OrElse(fn func() core.Option[T]) core.Option[T] {
 	if o.IsNone() {
 		return fn()
 	}
