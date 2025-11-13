@@ -99,6 +99,19 @@ func TestOption_None(t *testing.T) {
 		val.Expect(msg)
 	})
 
+	t.Run("Inspect should call fn on none", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := None[int]()
+		original := ""
+		// [A]ct
+		opt.Inspect(func(value int) {
+			original = fmt.Sprintf("%d", value)
+		})
+		// [A]ssert
+		must.Eq(t, "", original)
+	})
+
 	t.Run("Unwrap should panic", func(t *testing.T) {
 		t.Parallel()
 		// [A]rrange
@@ -235,6 +248,17 @@ func TestOption_None(t *testing.T) {
 		actual := opt.XOr(other)
 		// [A]ssert
 		must.True(t, actual.IsNone())
+	})
+
+	t.Run("Replace with value", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := None[int]()
+		// [A]ct
+		actual := opt.Replace(33)
+		// [A]ssert
+		must.True(t, actual.IsSome())
+		must.Eq(t, 33, actual.Unwrap())
 	})
 
 	t.Run("XOr returns Some when other is Some", func(t *testing.T) {
@@ -429,6 +453,19 @@ func TestOption_Some(t *testing.T) {
 		must.Eq(t, EXPECTED, actual)
 	})
 
+	t.Run("Inspect should call fn on some", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some(5)
+		original := ""
+		// [A]ct
+		opt.Inspect(func(value int) {
+			original = fmt.Sprintf("%d", value)
+		})
+		// [A]ssert
+		must.Eq(t, "5", original)
+	})
+
 	t.Run("Unwrap does not panic and returns the inner value", func(t *testing.T) {
 		t.Parallel()
 		// [A]rrange
@@ -536,6 +573,17 @@ func TestOption_Some(t *testing.T) {
 		must.False(t, actual.Equal(other))
 		must.True(t, actual.Equal(opt))
 		must.Eq(t, EXPECTED, actual.Unwrap())
+	})
+
+	t.Run("Replace with another value", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some(5)
+		// [A]ct
+		actual := opt.Replace(33)
+		// [A]ssert
+		must.True(t, actual.IsSome())
+		must.Eq(t, 33, actual.Unwrap())
 	})
 
 	t.Run("XOr returns None when other is Some", func(t *testing.T) {
