@@ -175,10 +175,6 @@ Option and Result
 **For Result[T]:**
 
 - Transformation:
-  - [ ] `And`
-  - [ ] `AndThen`
-  - [ ] `Or`
-  - [ ] `OrElse`
   - [ ] `Flatten`
 - Inspection:
   - [ ] `Inspect`

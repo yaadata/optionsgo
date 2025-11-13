@@ -5,6 +5,46 @@ import (
 	"github.com/yaadata/optionsgo/internal"
 )
 
+// ResultAnd returns other if result is Ok, otherwise returns the Err from result.
+// This is useful for chaining results where you want to proceed with the second
+// result only if the first one succeeded.
+//
+// Example:
+//   result := internal.Ok(5)
+//   other := internal.Ok("OTHER")
+//   ResultAnd(result, other) // Returns Ok("OTHER")
+//
+//   result := internal.Err[int](errors.New("ERROR"))
+//   other := internal.Ok("OTHER")
+//   ResultAnd(result, other) // Returns Err("ERROR")
+func ResultAnd[T, V any](result core.Result[T], other core.Result[V]) core.Result[V] {
+	if result.IsOk() {
+		return other
+	}
+	return internal.Err[V](result.UnwrapErr())
+}
+
+// ResultAndThen applies fn to the value inside result if it is Ok, otherwise returns the Err.
+// This is useful for chaining operations where the next operation depends on the value
+// of the first result.
+//
+// Example:
+//   result := internal.Ok(5)
+//   ResultAndThen(result, func(v int) core.Result[string] {
+//     return internal.Ok(strings.Repeat("A", v))
+//   }) // Returns Ok("AAAAA")
+//
+//   result := internal.Err[int](errors.New("ERROR"))
+//   ResultAndThen(result, func(v int) core.Result[string] {
+//     return internal.Ok(strings.Repeat("A", v))
+//   }) // Returns Err("ERROR")
+func ResultAndThen[T, V any](result core.Result[T], fn func(resultValue T) core.Result[V]) core.Result[V] {
+	if result.IsOk() {
+		return fn(result.Unwrap())
+	}
+	return internal.Err[V](result.UnwrapErr())
+}
+
 // ResultMap transforms a Result[T] to Result[V] by applying a function to the Ok value.
 // If the result is Err, it returns Err[V] with the same error.
 //
@@ -22,10 +62,7 @@ import (
 //	})
 //	transformed.IsError() // true
 func ResultMap[T, V any](result core.Result[T], fn func(inner T) V) core.Result[V] {
-	if result.IsOk() {
-		return internal.Ok(fn(result.Unwrap()))
-	}
-	return internal.Err[V](result.UnwrapErr())
+	return internal.ResultMap(result, fn)
 }
 
 // ResultMapOr transforms a Result[T] to Result[V] by applying a function to the Ok value,
@@ -47,10 +84,7 @@ func ResultMap[T, V any](result core.Result[T], fn func(inner T) V) core.Result[
 //	}, "DEFAULT")
 //	transformed.Unwrap() // "DEFAULT"
 func ResultMapOr[T, V any](result core.Result[T], fn func(inner T) V, or V) core.Result[V] {
-	if result.IsOk() {
-		return internal.Ok(fn(result.Unwrap()))
-	}
-	return internal.Ok(or)
+	return internal.ResultMapOr(result, fn, or)
 }
 
 // ResultMapOrElse transforms a Result[T] to Result[V] by applying a function to the Ok value,
@@ -82,8 +116,5 @@ func ResultMapOr[T, V any](result core.Result[T], fn func(inner T) V, or V) core
 //	)
 //	transformed.Unwrap() // "EXPECTED"
 func ResultMapOrElse[T, V any](result core.Result[T], fn func(inner T) V, orElse func(error) V) core.Result[V] {
-	if result.IsOk() {
-		return internal.Ok(fn(result.Unwrap()))
-	}
-	return internal.Ok(orElse(result.UnwrapErr()))
+	return internal.ResultMapOrElse(result, fn, orElse)
 }
