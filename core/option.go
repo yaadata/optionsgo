@@ -1,5 +1,7 @@
 package core
 
+import "github.com/yaadata/optionsgo/shared"
+
 // Option is a Go implementation of Rust's Option<T> type.
 // It represents an optional value: every Option is either Some and contains a value,
 // or None and does not contain a value.
@@ -18,8 +20,8 @@ package core
 //	    fmt.Println("no value")
 //	}
 type Option[T any] interface {
-	OptionChain[T]
-	OptionToResult[T]
+	optionChain[T]
+	optionToResult[T]
 	// Equal returns true if both options are equal.
 	//
 	// Equality rules:
@@ -77,7 +79,7 @@ type Option[T any] interface {
 	//	opt.IsNoneOr(func(v string) bool {
 	//	    return len(v) == 3
 	//	}) // returns false
-	IsNoneOr(pred Predicate[T]) bool
+	IsNoneOr(pred shared.Predicate[T]) bool
 
 	// IsSome returns true if the option contains a value (is Some).
 	//
@@ -106,7 +108,7 @@ type Option[T any] interface {
 	//	opt.IsSomeAnd(func(v string) bool {
 	//	    return true
 	//	}) // returns false
-	IsSomeAnd(pred Predicate[T]) bool
+	IsSomeAnd(pred shared.Predicate[T]) bool
 
 	// MapOr transforms the value or returns a default value, terminating the chain.
 	// If the current chain represents Some, applies fn to the value and returns the transformed result.
@@ -190,9 +192,9 @@ type Option[T any] interface {
 	UnwrapOrElse(fn func() T) T
 }
 
-// OptionChain provides a chainable interface for transforming Option values.
+// optionChain provides a chainable interface for transforming Option values.
 // It allows multiple operations to be composed fluently before converting back to an Option.
-type OptionChain[T any] interface {
+type optionChain[T any] interface {
 	// And returns the other option if this option is None, otherwise returns this option.
 	// This is the opposite of Or, which returns this option if Some, otherwise returns other.
 	//
@@ -254,7 +256,7 @@ type OptionChain[T any] interface {
 	//	    return value < 10
 	//	})
 	//	result.IsNone() // returns true
-	Filter(pred Predicate[T]) Option[T]
+	Filter(pred shared.Predicate[T]) Option[T]
 
 	// Inspect calls the provided function with the contained value if the option is Some,
 	// and returns the option unchanged for method chaining.
@@ -400,7 +402,7 @@ type OptionChain[T any] interface {
 	XOr(optb Option[T]) Option[T]
 }
 
-type OptionToResult[T any] interface {
+type optionToResult[T any] interface {
 	// OkOr transforms the Option into a Result, mapping Some(v) to Ok(v) and None to Err(err).
 	//
 	// Example:

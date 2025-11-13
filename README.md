@@ -36,12 +36,12 @@ import (
     "errors"
     "fmt"
 
-    "github.com/yaadata/optionsgo/core"
+    . "github.com/yaadata/optionsgo/core"
     . "github.com/yaadata/optionsgo"
 )
 
 // Using Option
-func findUser(id int) core.Option[string] {
+func findUser(id int) Option[string] {
     if id < 0 {
         return None[string]()
     }
@@ -54,7 +54,7 @@ if result.IsSome() {
 }
 
 // Using Result
-func divideNumbers(a, b int) core.Result[int] {
+func divideNumbers(a, b int) Result[int] {
     if b == 0 {
         return Err[int](errors.New("division by zero"))
     }
