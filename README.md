@@ -207,7 +207,7 @@ just doc
 
 ### Lint
 
-Run the project linter
+Lint the go code
 
 ```bash
 just lint
