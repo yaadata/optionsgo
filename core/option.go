@@ -327,6 +327,33 @@ type OptionChain[T any] interface {
 	//	result.Equal(other) // returns true
 	OrElse(fn func() Option[T]) Option[T]
 
+	// Reduce combines two Options using a binary function.
+	// If both Options contain values, applies the function to both values and returns Some(result).
+	// If only one Option contains a value, returns that Option.
+	// If both Options are None, returns None.
+	//
+	// Behavior:
+	//  - Some(a).Reduce(Some(b), fn) = Some(fn(a, b))
+	//  - Some(a).Reduce(None, fn) = Some(a)
+	//  - None.Reduce(Some(b), fn) = Some(b)
+	//  - None.Reduce(None, fn) = None
+	//
+	// Example:
+	//	opt := Some(10)
+	//	other := Some(5)
+	//	result := opt.Reduce(other, func(a, b int) int {
+	//	    return a + b
+	//	})
+	//	result.Unwrap() // returns 15
+	//
+	//	opt := Some(5)
+	//	other := None[int]()
+	//	result := opt.Reduce(other, func(a, b int) int {
+	//	    return a + b
+	//	})
+	//	result.Unwrap() // returns 5
+	Reduce(optb Option[T], fn func(a, b T) T) Option[T]
+
 	// Replace replaces the actual value in the option with the provided value,
 	// regardless of whether the option is Some or None.
 	// Always returns Some with the new value.

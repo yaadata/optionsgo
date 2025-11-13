@@ -172,14 +172,6 @@ See the respective test files
 The following are some possible candidates to expand the interface surface of
 Option and Result
 
-**For Option[T]:**
-
-- Transformation:
-  - [ ] `Replace`
-  - [ ] `Reduce`
-- Inspection:
-  - [ ] `Inspect`
-
 **For Result[T]:**
 
 - Transformation:
