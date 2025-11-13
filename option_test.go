@@ -2,10 +2,13 @@ package optionsgo_test
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/shoenig/test/must"
+
 	. "github.com/yaadata/optionsgo"
 	"github.com/yaadata/optionsgo/core"
 )
@@ -510,5 +513,149 @@ func TestOption_Some(t *testing.T) {
 		must.False(t, actual.Equal(other))
 		must.True(t, actual.Equal(opt))
 		must.Eq(t, EXPECTED, actual.Unwrap())
+	})
+}
+
+func TestOptionChaining(t *testing.T) {
+	t.Parallel()
+	t.Run("Some Type Chains and leads to a Some type", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some(15)
+		// [A]ct
+		actual := opt.
+			Filter(func(val int) bool {
+				return val > 10
+			}).
+			Map(func(value int) any {
+				return fmt.Sprintf("Value=%d", value)
+			}).
+			Option()
+		// [A]ssert
+		must.True(t, actual.IsSome())
+		must.Eq(t, "Value=15", actual.Unwrap())
+	})
+
+	t.Run("Some Type Chains with filter after map", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some(15)
+		// [A]ct
+		actual := opt.
+			Map(func(value int) any {
+				return fmt.Sprintf("Value=%d", value)
+			}).
+			Option().
+			Filter(func(val any) bool {
+				switch v := val.(type) {
+				case string:
+					return strings.Contains(v, "15")
+				default:
+					return false
+				}
+			})
+		// [A]ssert
+		must.True(t, actual.IsSome())
+		must.Eq(t, "Value=15", actual.Unwrap())
+	})
+
+	t.Run("Some Type Chains with filter after map leads to None", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some(15)
+		// [A]ct
+		actual := opt.
+			Map(func(value int) any {
+				return fmt.Sprintf("Value=%d", value)
+			}).
+			Option().
+			Filter(func(val any) bool {
+				switch v := val.(type) {
+				case string:
+					return strings.Contains(v, "DNE")
+				default:
+					return false
+				}
+			})
+		// [A]ssert
+		must.True(t, actual.IsNone())
+	})
+
+	t.Run("Some Type Chains and leads to a None type", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := Some(5)
+		// [A]ct
+		actual := opt.
+			Filter(func(val int) bool {
+				return val > 10
+			}).
+			Map(func(value int) any {
+				return fmt.Sprintf("Value=%d", value)
+			}).
+			Option()
+		// [A]ssert
+		must.True(t, actual.IsNone())
+	})
+
+	t.Run("None Type Chains and leads to a None type", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := None[int]()
+		// [A]ct
+		actual := opt.
+			Filter(func(val int) bool {
+				return val > 10
+			}).
+			Map(func(value int) any {
+				return fmt.Sprintf("Value=%d", value)
+			}).
+			Option()
+		// [A]ssert
+		must.True(t, actual.IsNone())
+	})
+
+	t.Run("Some Type Chains with multiple map functions", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := None[string]()
+		// [A]ct
+		actual := opt.
+			Map(func(a string) any {
+				return len(a)
+			}).
+			MapOr(func(value any) any {
+				switch val := value.(type) {
+				case int:
+					return fmt.Sprintf("VALUE=%d", val)
+				default:
+					return ""
+				}
+			}, "OTHER")
+		// [A]ssert
+		must.Eq(t, "OTHER", actual)
+	})
+
+	t.Run("Some Type Chains with multiple map functions", func(t *testing.T) {
+		t.Parallel()
+		// [A]rrange
+		opt := None[string]()
+		// [A]ct
+		actual := opt.
+			Map(func(a string) any {
+				return len(a)
+			}).
+			MapOrElse(func(value any) any {
+				switch val := value.(type) {
+				case int:
+					return fmt.Sprintf("VALUE=%d", val)
+				default:
+					return ""
+				}
+			}, func() any {
+				return "OTHER"
+			})
+		// [A]ssert
+		must.Eq(t, "OTHER", actual)
 	})
 }

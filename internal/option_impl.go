@@ -14,15 +14,16 @@ type option[T any] struct {
 	value *T
 }
 
-// interface guard
-var _ core.Option[string] = (*option[string])(nil)
-
 func None[T any]() core.Option[T] {
 	return &option[T]{value: nil}
 }
 
 func Some[T any](val T) core.Option[T] {
 	return &option[T]{value: &val}
+}
+
+func (o *option[T]) Option() core.Option[T] {
+	return o
 }
 
 func (o *option[T]) And(other core.Option[T]) core.Option[T] {
@@ -91,6 +92,22 @@ func (o *option[T]) UnwrapOrDefault() T {
 		return *new(T)
 	}
 	return *o.value
+}
+
+func (o *option[T]) AndThen(fn func(T) core.Option[any]) core.OptionChain[any] {
+	return OptionAndThen(o, fn)
+}
+
+func (o *option[T]) Map(fn func(T) any) core.OptionChain[any] {
+	return OptionMap(o, fn)
+}
+
+func (o *option[T]) MapOr(fn func(T) any, or any) any {
+	return OptionMapOr(o, fn, or)
+}
+
+func (o *option[T]) MapOrElse(fn func(T) any, orElse func() any) any {
+	return OptionMapOrElse(o, fn, orElse)
 }
 
 func (o *option[T]) Filter(pred core.Predicate[T]) core.Option[T] {

@@ -255,4 +255,6 @@ type Option[T any] interface {
 	//	})
 	//	result.Equal(other) // returns true
 	OrElse(fn func() Option[T]) Option[T]
+
+	OptionChain[T]
 }
