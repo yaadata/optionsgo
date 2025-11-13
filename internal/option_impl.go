@@ -4,6 +4,7 @@ import (
 	"reflect"
 
 	"github.com/yaadata/optionsgo/core"
+	"github.com/yaadata/optionsgo/shared"
 )
 
 const (
@@ -37,7 +38,7 @@ func (o *option[T]) IsSome() bool {
 	return o.value != nil
 }
 
-func (o *option[T]) IsSomeAnd(pred core.Predicate[T]) bool {
+func (o *option[T]) IsSomeAnd(pred shared.Predicate[T]) bool {
 	if o.value != nil {
 		return pred(*o.value)
 	}
@@ -48,7 +49,7 @@ func (o *option[T]) IsNone() bool {
 	return o.value == nil
 }
 
-func (o *option[T]) IsNoneOr(pred core.Predicate[T]) bool {
+func (o *option[T]) IsNoneOr(pred shared.Predicate[T]) bool {
 	if o.value != nil {
 		return pred(*o.value)
 	}
@@ -110,7 +111,7 @@ func (o *option[T]) MapOrElse(fn func(T) any, orElse func() any) any {
 	return OptionMapOrElse(o, fn, orElse)
 }
 
-func (o *option[T]) Filter(pred core.Predicate[T]) core.Option[T] {
+func (o *option[T]) Filter(pred shared.Predicate[T]) core.Option[T] {
 	if o.value != nil && pred(*o.value) {
 		return o
 	}

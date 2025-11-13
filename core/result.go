@@ -1,5 +1,7 @@
 package core
 
+import "github.com/yaadata/optionsgo/shared"
+
 // Result represents the outcome of an operation that can either succeed with a value
 // or fail with an error. This is a Go implementation of Rust's std::result::Result type.
 //
@@ -7,8 +9,8 @@ package core
 //   - Ok: contains a successful value of type T
 //   - Err: contains an error
 type Result[T any] interface {
-	ResultChain[T]
-	ResultToOption[T]
+	resultChain[T]
+	resultToOption[T]
 
 	// Expect returns the contained Ok value.
 	// Panics with the provided message if the result is Err.
@@ -56,7 +58,7 @@ type Result[T any] interface {
 	//
 	//  result := Err[string](errors.New("error"))
 	//  result.IsOkAnd(func(s string) bool { return true }) // false
-	IsOkAnd(pred Predicate[T]) bool
+	IsOkAnd(pred shared.Predicate[T]) bool
 
 	// IsError returns true if the result is Err.
 	//
@@ -79,7 +81,7 @@ type Result[T any] interface {
 	//
 	//  result := Ok("value")
 	//  result.IsErrorAnd(func(e error) bool { return true }) // false
-	IsErrorAnd(pred Predicate[error]) bool
+	IsErrorAnd(pred shared.Predicate[error]) bool
 
 	// Unwrap returns the contained Ok value.
 	// Panics if the result is Err.
@@ -139,7 +141,7 @@ type Result[T any] interface {
 	UnwrapOrElse(fn func() T) T
 }
 
-type ResultChain[T any] interface {
+type resultChain[T any] interface {
 
 	// Inspect calls the provided function with the Ok value if the result is Ok,
 	// then returns the result unchanged for chaining. If the result is Err, the function is not called.
@@ -272,7 +274,7 @@ type ResultChain[T any] interface {
 	OrElse(fn func(err error) Result[T]) Result[T]
 }
 
-type ResultToOption[T any] interface {
+type resultToOption[T any] interface {
 	// Ok returns Some(value) if the result is Ok, otherwise returns None.
 	//
 	// Example:

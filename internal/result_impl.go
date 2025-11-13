@@ -1,6 +1,9 @@
 package internal
 
-import "github.com/yaadata/optionsgo/core"
+import (
+	"github.com/yaadata/optionsgo/core"
+	"github.com/yaadata/optionsgo/shared"
+)
 
 type result[T any] struct {
 	value *T
@@ -66,7 +69,7 @@ func (r *result[T]) IsOk() bool {
 	return r.value != nil
 }
 
-func (r *result[T]) IsOkAnd(pred core.Predicate[T]) bool {
+func (r *result[T]) IsOkAnd(pred shared.Predicate[T]) bool {
 	if r.IsOk() {
 		return pred(*r.value)
 	}
@@ -77,7 +80,7 @@ func (r *result[T]) IsError() bool {
 	return r.err != nil
 }
 
-func (r *result[T]) IsErrorAnd(pred core.Predicate[error]) bool {
+func (r *result[T]) IsErrorAnd(pred shared.Predicate[error]) bool {
 	if r.IsError() {
 		return pred(r.err)
 	}
