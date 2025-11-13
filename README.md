@@ -68,24 +68,9 @@ value := result.UnwrapOr(0) // 5
 
 ### Option[T] Interface
 
-The `Option[T]` type represents an optional value. Every Option is either `Some`
-(contains a value) or `None` (does not contain a value).
+The interface methods can be found in [here](./core/option.go)
 
-| Method                                  | Description                                         |
-| --------------------------------------- | --------------------------------------------------- |
-| `IsSome() bool`                         | Returns true if the option contains a value         |
-| `IsSomeAnd(pred Predicate[T]) bool`     | Returns true if Some and predicate matches          |
-| `IsNone() bool`                         | Returns true if the option does not contain a value |
-| `IsNoneOr(pred Predicate[T]) bool`      | Returns true if None or predicate matches           |
-| `Unwrap() T`                            | Returns the contained value (panics if None)        |
-| `Expect(msg string) T`                  | Returns the value with custom panic message if None |
-| `UnwrapOrElse(fn func() T) T`           | Returns the value or computes a default             |
-| `UnwrapOrDefault() T`                   | Returns the value or the zero value of type T       |
-| `OkOr(err error) Result[T]`             | Converts Some(v) to Ok(v), None to Err(err)         |
-| `OkOrElse(fn func() error) Result[T]`   | Converts to Result with computed error              |
-| `Or(optb Option[T]) Option[T]`          | Returns self if Some, otherwise returns optb        |
-| `OrElse(fn func() Option[T]) Option[T]` | Returns self if Some, otherwise calls fn            |
-| `Equal(Option[T]) bool`                 | Returns true if both options are equal              |
+View the interface definition via html by running `just doc`
 
 #### Constructor Functions
 
@@ -96,22 +81,9 @@ None[T]() Option[T]           // Creates an Option with no value
 
 ### Result[T] Interface
 
-The `Result[T]` type represents an operation that can either succeed with a
-value or fail with an error.
+The interface methods can be found in [here](./core/result.go)
 
-| Method                                   | Description                                  |
-| ---------------------------------------- | -------------------------------------------- |
-| `IsOk() bool`                            | Returns true if the result is Ok             |
-| `IsOkAnd(pred Predicate[T]) bool`        | Returns true if Ok and predicate matches     |
-| `IsError() bool`                         | Returns true if the result is Err            |
-| `IsErrorAnd(pred Predicate[error]) bool` | Returns true if Err and predicate matches    |
-| `Ok() Option[T]`                         | Returns Some(value) if Ok, otherwise None    |
-| `Err() Option[error]`                    | Returns Some(error) if Err, otherwise None   |
-| `Unwrap() T`                             | Returns the Ok value (panics if Err)         |
-| `UnwrapErr() error`                      | Returns the Err value (panics if Ok)         |
-| `UnwrapOr(value T) T`                    | Returns the Ok value or provided default     |
-| `UnwrapOrElse(fn func() T) T`            | Returns the Ok value or computes default     |
-| `UnwrapOrDefault() T`                    | Returns the Ok value or zero value of type T |
+View the interface definition via html by running `just doc`
 
 #### Constructor Functions
 
