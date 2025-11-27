@@ -5,9 +5,16 @@ import (
 	"github.com/yaadata/optionsgo/internal"
 )
 
+// Option is a re-export of [core.Option]
+type Option[T any] = core.Option[T]
+
+// Result is a re-export of [core.Result]
+type Result[T any] = core.Result[T]
+
 // None creates an Option that contains no value.
 //
-// Use None when you want to represent the absence of a value//
+// Use None when you want to represent the absence of a value.
+//
 // Example:
 //
 //	// Function that may not return a value
@@ -23,13 +30,14 @@ import (
 //	if result.IsNone() {
 //	    fmt.Println("User not found")
 //	}
-func None[T any]() core.Option[T] {
+func None[T any]() Option[T] {
 	return internal.None[T]()
 }
 
 // Some creates an Option that contains the provided value.
 //
 // Use Some when you have a valid value to wrap in an Option type.
+//
 // Example:
 //
 //	// Function that returns a value when found
@@ -46,7 +54,7 @@ func None[T any]() core.Option[T] {
 //	    user := result.Unwrap()
 //	    fmt.Printf("Found user: %v\n", user)
 //	}
-func Some[T any](value T) core.Option[T] {
+func Some[T any](value T) Option[T] {
 	return internal.Some(value)
 }
 
@@ -58,7 +66,7 @@ func Some[T any](value T) core.Option[T] {
 //	result.IsError() // true
 //	result.UnwrapErr() // errors.New("something went wrong")
 //	result.UnwrapOr("default") // "default"
-func Err[T any](err error) core.Result[T] {
+func Err[T any](err error) Result[T] {
 	return internal.Err[T](err)
 }
 
@@ -70,6 +78,6 @@ func Err[T any](err error) core.Result[T] {
 //	result.IsOk() // true
 //	result.Unwrap() // "success"
 //	result.UnwrapOr("default") // "success"
-func Ok[T any](value T) core.Result[T] {
+func Ok[T any](value T) Result[T] {
 	return internal.Ok(value)
 }

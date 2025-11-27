@@ -36,7 +36,6 @@ import (
     "errors"
     "fmt"
 
-    . "github.com/yaadata/optionsgo/core"
     . "github.com/yaadata/optionsgo"
 )
 

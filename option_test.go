@@ -10,7 +10,6 @@ import (
 	"github.com/shoenig/test/must"
 
 	. "github.com/yaadata/optionsgo"
-	. "github.com/yaadata/optionsgo/core"
 )
 
 func TestOption_None(t *testing.T) {
