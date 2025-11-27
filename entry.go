@@ -13,7 +13,8 @@ type Result[T any] = core.Result[T]
 
 // None creates an Option that contains no value.
 //
-// Use None when you want to represent the absence of a value//
+// Use None when you want to represent the absence of a value.
+//
 // Example:
 //
 //	// Function that may not return a value
@@ -36,6 +37,7 @@ func None[T any]() Option[T] {
 // Some creates an Option that contains the provided value.
 //
 // Use Some when you have a valid value to wrap in an Option type.
+//
 // Example:
 //
 //	// Function that returns a value when found
