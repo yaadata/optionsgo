@@ -52,7 +52,7 @@ func None[T any]() Option[T] {
 //	    user := result.Unwrap()
 //	    fmt.Printf("Found user: %v\n", user)
 //	}
-func Some[T any](value T) core.Option[T] {
+func Some[T any](value T) Option[T] {
 	return internal.Some(value)
 }
 
@@ -64,7 +64,7 @@ func Some[T any](value T) core.Option[T] {
 //	result.IsError() // true
 //	result.UnwrapErr() // errors.New("something went wrong")
 //	result.UnwrapOr("default") // "default"
-func Err[T any](err error) core.Result[T] {
+func Err[T any](err error) Result[T] {
 	return internal.Err[T](err)
 }
 
@@ -76,6 +76,6 @@ func Err[T any](err error) core.Result[T] {
 //	result.IsOk() // true
 //	result.Unwrap() // "success"
 //	result.UnwrapOr("default") // "success"
-func Ok[T any](value T) core.Result[T] {
+func Ok[T any](value T) Result[T] {
 	return internal.Ok(value)
 }
