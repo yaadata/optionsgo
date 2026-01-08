@@ -1,17 +1,15 @@
 name: Release
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - main
 
 jobs:
   release:
     if: |
-      github.event.pull_request.merged == true &&
-      (startsWith(github.event.pull_request.title, 'RELEASE:') ||
-       startsWith(github.event.pull_request.title, 'release:'))
+      startsWith(github.event.head_commit.message, 'RELEASE:') ||
+      startsWith(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -19,14 +17,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Extract tag from PR title
+      - name: Extract tag from commit message
         id: extract_tag
         run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          TAG=$(echo "$PR_TITLE" | sed -E 's/^[Rr][Ee][Ll][Ee][Aa][Ss][Ee]: *//')
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          # Get first line of commit message
+          FIRST_LINE=$(echo "$COMMIT_MSG" | head -n 1)
+          TAG=$(echo "$FIRST_LINE" | sed -E 's/^[Rr][Ee][Ll][Ee][Aa][Ss][Ee]: *//')
 
           if [ -z "$TAG" ]; then
-            echo "Error: No tag found in PR title"
+            echo "Error: No tag found in commit message"
             exit 1
           fi
 
