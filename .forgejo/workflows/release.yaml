@@ -1,0 +1,108 @@
+name: Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  release:
+    if: |
+      github.event.pull_request.merged == true &&
+      (startsWith(github.event.pull_request.title, 'RELEASE:') ||
+       startsWith(github.event.pull_request.title, 'release:'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: https://code.forgejo.org/actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract tag from PR title
+        id: extract_tag
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          TAG=$(echo "$PR_TITLE" | sed -E 's/^[Rr][Ee][Ll][Ee][Aa][Ss][Ee]: *//')
+
+          if [ -z "$TAG" ]; then
+            echo "Error: No tag found in PR title"
+            exit 1
+          fi
+
+          if ! [[ "$TAG" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
+            echo "Error: Tag must be in format v0.0.0, v0.0.0-alpha, or v0.0.0-rc.1"
+            exit 1
+          fi
+
+          if [[ ! "$TAG" =~ ^v ]]; then
+            TAG="v$TAG"
+          fi
+
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Creating release for tag: $TAG"
+
+      - name: Check if tag exists
+        run: |
+          if git rev-parse "${{ steps.extract_tag.outputs.tag }}" >/dev/null 2>&1; then
+            echo "Error: Tag ${{ steps.extract_tag.outputs.tag }} already exists"
+            exit 1
+          fi
+
+      - name: Create and push tag
+        run: |
+          git config user.name "forgejo-actions[bot]"
+          git config user.email "forgejo-actions[bot]@noreply.codeberg.org"
+          git tag ${{ steps.extract_tag.outputs.tag }}
+          git push origin ${{ steps.extract_tag.outputs.tag }}
+
+      - name: Get previous tag
+        id: get_previous_tag
+        run: |
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 ${{ steps.extract_tag.outputs.tag }}^ 2>/dev/null || echo "")
+          echo "previous_tag=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+          echo "Previous tag: $PREVIOUS_TAG"
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          TAG="${{ steps.extract_tag.outputs.tag }}"
+          PREVIOUS_TAG="${{ steps.get_previous_tag.outputs.previous_tag }}"
+
+          if [ -n "$PREVIOUS_TAG" ]; then
+            COMMITS=$(git log --pretty=format:"- %s (%h)" ${PREVIOUS_TAG}..${TAG} 2>/dev/null || git log --pretty=format:"- %s (%h)" -20)
+          else
+            COMMITS=$(git log --pretty=format:"- %s (%h)" -20)
+          fi
+
+          NOTES="## What's Changed
+
+          ${COMMITS}
+
+          **Full Changelog**: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/${PREVIOUS_TAG}...${TAG}"
+
+          # Write to file for multiline handling
+          echo "$NOTES" > release_notes.md
+          echo "Generated release notes"
+
+      - name: Create Forgejo Release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.extract_tag.outputs.tag }}"
+          NOTES=$(cat release_notes.md)
+
+          # Escape special characters for JSON
+          NOTES_ESCAPED=$(echo "$NOTES" | jq -Rs .)
+
+          curl -X POST \
+            -H "Authorization: token ${GITHUB_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "${GITHUB_SERVER_URL}/api/v1/repos/${GITHUB_REPOSITORY}/releases" \
+            -d "{
+              \"tag_name\": \"${TAG}\",
+              \"name\": \"${TAG}\",
+              \"body\": ${NOTES_ESCAPED},
+              \"draft\": false,
+              \"prerelease\": false
+            }"

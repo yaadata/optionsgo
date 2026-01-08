@@ -1,0 +1,54 @@
+name: 'Lint PR'
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+
+jobs:
+  main:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR title follows conventional commit format
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          # Define allowed types (conventional commit types)
+          ALLOWED_TYPES="breaking|chore|ci|docs|enhance|feat|fix|refactor|release|test"
+
+          # Pattern: type(optional-scope): description
+          # or: type: description
+          PATTERN="^(${ALLOWED_TYPES})(\(.+\))?: .+"
+
+          if [[ ! "$PR_TITLE" =~ $PATTERN ]]; then
+            echo "::error::PR title does not follow conventional commit format."
+            echo ""
+            echo "Expected format: <type>: <description>"
+            echo "  or: <type>(scope): <description>"
+            echo ""
+            echo "Allowed types:"
+            echo "  - breaking: Breaking changes"
+            echo "  - chore: Maintenance tasks"
+            echo "  - ci: CI/CD changes"
+            echo "  - docs: Documentation changes"
+            echo "  - enhance: Enhancements to existing features"
+            echo "  - feat: New features"
+            echo "  - fix: Bug fixes"
+            echo "  - refactor: Code refactoring"
+            echo "  - release: Release commits"
+            echo "  - test: Test changes"
+            echo ""
+            echo "Examples:"
+            echo "  - feat: add user authentication"
+            echo "  - fix(api): resolve null pointer exception"
+            echo "  - docs: update README with new examples"
+            echo ""
+            echo "Your PR title: $PR_TITLE"
+            exit 1
+          fi
+
+          echo "PR title is valid: $PR_TITLE"

@@ -1,0 +1,58 @@
+name: 'Go'
+
+on:
+  push:
+    branches: [main]
+    paths: &applicable_paths
+      - '**/*.go'
+      - '**.go'
+      - 'go.mod'
+      - 'go.sum'
+  pull_request:
+    types: [opened, synchronize]
+    paths: *applicable_paths
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@v4
+
+      - name: Set up Go
+        uses: https://code.forgejo.org/actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Install Just
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.1.6
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
+      - name: Run lint
+        run: just lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ['1.24', '1.25']
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@v4
+
+      - name: Set up Go
+        uses: https://code.forgejo.org/actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Install Just
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+
+      - name: Run tests
+        run: just test
