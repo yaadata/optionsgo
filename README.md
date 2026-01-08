@@ -26,7 +26,7 @@ The following tools are used in this project
 ## Installation
 
 ```bash
-go get codeberg.org/yaadata/opt@v0.5.0
+go get codeberg.org/yaadata/opt@v1.0.0-alpha-1
 ```
 
 ## Quick Start
@@ -149,36 +149,6 @@ opt.IsNone()  // false
 empty := None[string]()
 empty.IsSome()  // false
 empty.IsNone()  // true
-```
-
-#### Conditional Checks with Predicates
-
-```go
-import (
-    . "codeberg.org/yaadata/opt"
-)
-
-//... 
-
-opt := Some("SOME")
-
-// Check if Some and predicate passes
-opt.IsSomeAnd(func(s string) bool {
-    return len(s) == 4
-}) // true
-
-opt.IsSomeAnd(func(s string) bool {
-    return len(s) == 3
-}) // false
-
-// Check if None or predicate passes
-opt.IsNoneOr(func(s string) bool {
-    return len(s) == 4
-}) // true (predicate passes)
-
-None[string]().IsNoneOr(func(s string) bool {
-    return false
-}) // true (is None)
 ```
 
 #### More Examples ?
